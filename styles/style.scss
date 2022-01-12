@@ -1,13 +1,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap');
 @import './utilities';
 
-$primaryColor: steelblue;
-$border: 4px solid black;
+$primaryColor: rgb(69, 149, 214);
+$border: 1px solid black;
 $boardColor: $green;
 $darkSquareColor: rgba(
   $color: #000000,
   $alpha: 0.2,
 );
+$activeSquareColor: lighten($primaryColor, 5%);
+$activeDarkSquareColor: darken($primaryColor, 5%);
+$hoverColor: $orange;
 
 * {
   margin: 0;
@@ -56,27 +59,35 @@ body {
     // width: 800px;
 
     .square {
-      $size: 50px;
-      height: $size;
-      width: $size;
-      &:hover {
-        background-color: lighten($primaryColor, 10%) !important;
+      // $size: 50px;
+      // height: $size;
+      // width: $size;
+      @extend %flex-center;
+      border: $border;
+      z-index: 1;
+      &.dark {
+        background-color: $darkSquareColor;
+      }
+
+      &.active {
+        background-color: $activeSquareColor;
+      }
+
+      &.active.dark {
+        background-color: $activeDarkSquareColor;
+      }
+
+      &:not(.active) {
+        cursor: pointer;
+      }
+
+      &:not(.active):hover {
+        background-color: $hoverColor !important;
       }
     }
 
     .row {
       display: flex;
-      // chess board effect
-      &:nth-child(odd) {
-        .square:nth-child(even) {
-          background-color: $darkSquareColor;
-        }
-      }
-      &:nth-child(even) {
-        .square:nth-child(odd) {
-          background-color: $darkSquareColor;
-        }
-      }
     }
   }
 }

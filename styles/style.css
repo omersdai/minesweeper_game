@@ -31,7 +31,7 @@
   padding: 5px 10px;
 }
 
-.popup {
+.minesweeper-container .minesweeper .square, .popup {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -77,8 +77,8 @@ body {
           align-items: center;
   min-height: 100vh;
   width: 100vw;
-  background-color: steelblue;
-  color: #fff;
+  background-color: #4595d6;
+  color: #000;
 }
 
 .minesweeper-container {
@@ -112,26 +112,34 @@ body {
 }
 
 .minesweeper-container .minesweeper .square {
-  height: 50px;
-  width: 50px;
+  border: 1px solid black;
+  z-index: 1;
 }
 
-.minesweeper-container .minesweeper .square:hover {
-  background-color: #699bc4 !important;
+.minesweeper-container .minesweeper .square.dark {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.minesweeper-container .minesweeper .square.active {
+  background-color: #5aa1db;
+}
+
+.minesweeper-container .minesweeper .square.active.dark {
+  background-color: #3089d1;
+}
+
+.minesweeper-container .minesweeper .square:not(.active) {
+  cursor: pointer;
+}
+
+.minesweeper-container .minesweeper .square:not(.active):hover {
+  background-color: #ffa600 !important;
 }
 
 .minesweeper-container .minesweeper .row {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-
-.minesweeper-container .minesweeper .row:nth-child(odd) .square:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.2);
-}
-
-.minesweeper-container .minesweeper .row:nth-child(even) .square:nth-child(odd) {
-  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .fa-flag {
@@ -143,8 +151,8 @@ body {
 }
 
 .popup {
-  background-color: steelblue;
-  color: #fff;
+  background-color: #4595d6;
+  color: #000;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
