@@ -1,0 +1,156 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,700&display=swap");
+.hide {
+  display: none !important;
+}
+
+.popup button {
+  font-size: 15px;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.popup button:active {
+  -webkit-transform: scale(95%);
+          transform: scale(95%);
+}
+
+.popup button:hover {
+  -webkit-filter: brightness(0.95);
+          filter: brightness(0.95);
+}
+
+.popup button:disabled {
+  cursor: default;
+}
+
+.minesweeper-container .difficulty {
+  font-size: 23px;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.popup {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  list-style: none;
+}
+
+body {
+  position: relative;
+  font-family: 'Roboto', serif;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: steelblue;
+  color: #fff;
+}
+
+.minesweeper-container {
+  background-color: #3dd83d;
+}
+
+.minesweeper-container .game-header {
+  height: 60px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 10px;
+}
+
+.minesweeper-container .difficulty {
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+}
+
+.minesweeper-container .game-text {
+  font-size: 20px;
+  margin: 10px;
+}
+
+.minesweeper-container .minesweeper .square {
+  height: 50px;
+  width: 50px;
+}
+
+.minesweeper-container .minesweeper .square:hover {
+  background-color: #699bc4 !important;
+}
+
+.minesweeper-container .minesweeper .row {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.minesweeper-container .minesweeper .row:nth-child(odd) .square:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.minesweeper-container .minesweeper .row:nth-child(even) .square:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.fa-flag {
+  color: red;
+}
+
+.fa-stopwatch {
+  margin-left: 20px;
+}
+
+.popup {
+  background-color: steelblue;
+  color: #fff;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 10px;
+  padding: 30px;
+  border-radius: 10px;
+}
+/*# sourceMappingURL=style.css.map */
