@@ -10,14 +10,19 @@ const difficultyEl = document.getElementById('difficulty');
 const flagCountEl = document.getElementById('flagCount');
 const clockEl = document.getElementById('clock');
 const flagHtml = '<i class="fas fa-flag fa-2x"></i>';
+const mineHtml = '<i class="fas fa-bomb fa-2x"></i>';
 const tick = 1000; // ms
 
 let difficulty;
 let gameActive;
+let gameEnded;
 let flagRemaining;
 let interval;
 let time;
-let rows;
+let squares;
+let cleanSquares;
+let flaggedSquares;
+let minedSquares;
 
 const difficulties = {
   // Also add box sizes in pixel
@@ -32,8 +37,8 @@ const difficulties = {
     rowCount: 14,
     colCount: 18,
     mineCount: 40,
-    squareSize: 45, // px
-    fontSize: 18, //px
+    squareSize: 40, // px
+    fontSize: 15, //px
   },
   hard: {
     rowCount: 20,
@@ -44,30 +49,43 @@ const difficulties = {
   },
 };
 
-const [WON, CONTINUE, LOST] = ['won', 'continue', 'lost'];
-
 // Game
 function initializeGame() {
   difficulty = difficulties[difficultyEl.value];
   gameActive = false;
+  gameEnded = false;
   flagRemaining = difficulty.mineCount;
   clearInterval(interval);
   time = 0;
+  cleanSquares = new Set();
+  flaggedSquares = new Set();
+  minedSquares = new Set();
 
   fillBoard();
 }
 
 function clickSquare(e) {
   const square = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
-  if (square.classList.contains('active') || square.innerHTML !== '') return;
+  if (
+    gameEnded ||
+    square.classList.contains('active') ||
+    square.innerHTML !== ''
+  )
+    return;
 
   const row = parseInt(square.getAttribute('row'));
   const col = parseInt(square.getAttribute('col'));
-  square.classList.add('active');
 
   if (!gameActive) {
     gameActive = true;
-    placeMines();
+    startGame(square);
+  }
+
+  if (minedSquares.has(square)) {
+    // clicked mine :(
+    endGame('lost');
+  } else {
+    activateSquare(square);
   }
 
   checkGameStatus();
@@ -76,7 +94,7 @@ function clickSquare(e) {
 function placeFlag(e) {
   e.preventDefault();
   const square = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
-  if (square.classList.contains('active')) return;
+  if (gameEnded || square.classList.contains('active')) return;
 
   const row = parseInt(square.getAttribute('row'));
   const col = parseInt(square.getAttribute('col'));
@@ -94,12 +112,38 @@ function placeFlag(e) {
   checkGameStatus();
 }
 
-function placeMines() {
-  interval = setInterval(() => {
-    time += tick;
-    updateClock();
-  }, tick);
-  console.log('placed mines');
+function activateSquare(square) {
+  if (square.classList.contains('active')) return;
+  square.classList.add('active');
+  const row = parseInt(square.getAttribute('row'));
+  const col = parseInt(square.getAttribute('col'));
+
+  const neighbors = getNeighbors(square);
+  let mineCount = neighbors.reduce((count, neighbor) => {
+    if (minedSquares.has(neighbor)) count++;
+    return count;
+  }, 0);
+
+  if (mineCount === 0) {
+    neighbors.forEach((neighbor) => activateSquare(neighbor));
+  } else {
+    square.innerText = mineCount;
+  }
+}
+
+function startGame(square) {
+  //activate clock
+  interval = setInterval(updateClock, tick);
+
+  //place mines
+  const { mineCount } = difficulty;
+  getNeighbors(square).forEach((s) => cleanSquares.delete(s)); // first click cannot contain a mine
+
+  for (let i = 0; i < mineCount; i++) {
+    const square = getRandomSetElement(cleanSquares);
+    cleanSquares.delete(square);
+    minedSquares.add(square);
+  }
 }
 
 function checkGameStatus() {
@@ -107,6 +151,7 @@ function checkGameStatus() {
 }
 
 function updateClock() {
+  time += tick;
   const seconds = parseInt(time / 1000) % 60;
   const minutes = parseInt(time / (1000 * 60));
   clockEl.innerText = `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
@@ -128,17 +173,50 @@ function fillBoard() {
       square.setAttribute('row', i);
       square.setAttribute('col', j);
 
+      cleanSquares.add(square);
       row.appendChild(square);
     }
     minesweeperEl.appendChild(row);
   }
-  rows = minesweeperEl.querySelectorAll('.row');
+  squares = Array.from(minesweeperEl.querySelectorAll('.row')).map((row) =>
+    row.querySelectorAll('.square')
+  );
 }
 
-function showEndGame() {
-  gameMessageEl.innerText = `You ${gameStatus}!`;
-  scoreEl.innerText = score;
-  popupEl.classList.remove('hide');
+function endGame(result) {
+  gameEnded = true;
+  clearInterval(interval); // stop clock
+  gameMessageEl.innerText = `You ${result}!`;
+  // popupEl.classList.remove('hide');
+  for (square of minedSquares) {
+    if (square.innerHTML === '') square.innerHTML = mineHtml;
+  }
+}
+
+function getNeighbors(square) {
+  const { rowCount, colCount } = difficulty;
+  const row = parseInt(square.getAttribute('row'));
+  const col = parseInt(square.getAttribute('col'));
+  const rowStart = Math.max(0, row - 1),
+    rowEnd = Math.min(rowCount - 1, row + 1);
+  const colStart = Math.max(0, col - 1),
+    colEnd = Math.min(colCount - 1, col + 1);
+  let neighbors = [];
+  for (let i = rowStart; i <= rowEnd; i++) {
+    for (let j = colStart; j <= colEnd; j++) {
+      neighbors.push(squares[i][j]);
+    }
+  }
+
+  return neighbors;
+}
+
+function getRandomSetElement(set) {
+  const idx = Math.floor(Math.random() * set.size);
+  let i = 0;
+  for (let element of set) {
+    if (idx === i++) return element;
+  }
 }
 
 minesweeperEl.addEventListener('click', clickSquare); // left click
