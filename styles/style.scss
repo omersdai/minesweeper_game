@@ -57,6 +57,7 @@ body {
   .minesweeper {
     // height: 500px;
     // width: 800px;
+    font-weight: bold;
 
     .square {
       // $size: 50px;
@@ -92,7 +93,8 @@ body {
   }
 }
 
-.fa-flag {
+.fa-flag,
+.fa-times {
   color: red;
 }
 

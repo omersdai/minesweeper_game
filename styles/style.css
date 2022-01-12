@@ -111,6 +111,10 @@ body {
   margin: 10px;
 }
 
+.minesweeper-container .minesweeper {
+  font-weight: bold;
+}
+
 .minesweeper-container .minesweeper .square {
   border: 1px solid black;
   z-index: 1;
@@ -142,7 +146,8 @@ body {
   display: flex;
 }
 
-.fa-flag {
+.fa-flag,
+.fa-times {
   color: red;
 }
 

@@ -9,8 +9,10 @@ const minesweeperEl = document.getElementById('minesweeper');
 const difficultyEl = document.getElementById('difficulty');
 const flagCountEl = document.getElementById('flagCount');
 const clockEl = document.getElementById('clock');
+
 const flagHtml = '<i class="fas fa-flag fa-2x"></i>';
 const mineHtml = '<i class="fas fa-bomb fa-2x"></i>';
+const crossHtml = '<i class="fas fa-times fa-2x"></i>';
 const tick = 1000; // ms
 
 let difficulty;
@@ -20,7 +22,9 @@ let flagRemaining;
 let interval;
 let time;
 let squares;
+let squareCount;
 let cleanSquares;
+let activeSquares;
 let flaggedSquares;
 let minedSquares;
 
@@ -41,8 +45,8 @@ const difficulties = {
     fontSize: 15, //px
   },
   hard: {
-    rowCount: 20,
-    colCount: 24,
+    rowCount: 18,
+    colCount: 26,
     mineCount: 100,
     squareSize: 33, // px
     fontSize: 13, //px
@@ -58,8 +62,12 @@ function initializeGame() {
   clearInterval(interval);
   time = 0;
   cleanSquares = new Set();
+  activeSquares = new Set();
   flaggedSquares = new Set();
   minedSquares = new Set();
+
+  flagCountEl.innerText = flagRemaining;
+  clockEl.innerText = '0:00';
 
   fillBoard();
 }
@@ -82,13 +90,13 @@ function clickSquare(e) {
   }
 
   if (minedSquares.has(square)) {
-    // clicked mine :(
-    endGame('lost');
+    endGame('lost'); // clicked mine :(
   } else {
     activateSquare(square);
+    if (activeSquares.size + difficulty.mineCount === squareCount) {
+      alert('YOU WON!!! in' + time);
+    }
   }
-
-  checkGameStatus();
 }
 
 function placeFlag(e) {
@@ -100,20 +108,23 @@ function placeFlag(e) {
   const col = parseInt(square.getAttribute('col'));
   if (square.innerHTML === '') {
     // place flag
-    square.innerHTML = flagHtml;
     flagRemaining--;
+    flaggedSquares.add(square);
+    square.innerHTML = flagHtml;
   } else {
     // remove flag
-    square.innerHTML = '';
     flagRemaining++;
+    flaggedSquares.delete(square);
+    square.innerHTML = '';
   }
 
   flagCountEl.innerText = flagRemaining;
-  checkGameStatus();
 }
 
 function activateSquare(square) {
-  if (square.classList.contains('active')) return;
+  if (activeSquares.has(square)) return;
+
+  activeSquares.add(square);
   square.classList.add('active');
   const row = parseInt(square.getAttribute('row'));
   const col = parseInt(square.getAttribute('col'));
@@ -126,6 +137,7 @@ function activateSquare(square) {
 
   if (mineCount === 0) {
     neighbors.forEach((neighbor) => activateSquare(neighbor));
+    square.innerHTML = '';
   } else {
     square.innerText = mineCount;
   }
@@ -181,6 +193,8 @@ function fillBoard() {
   squares = Array.from(minesweeperEl.querySelectorAll('.row')).map((row) =>
     row.querySelectorAll('.square')
   );
+
+  squareCount = rowCount * colCount;
 }
 
 function endGame(result) {
@@ -190,6 +204,9 @@ function endGame(result) {
   // popupEl.classList.remove('hide');
   for (square of minedSquares) {
     if (square.innerHTML === '') square.innerHTML = mineHtml;
+  }
+  for (square of flaggedSquares) {
+    if (!minedSquares.has(square)) square.innerHTML = crossHtml;
   }
 }
 
