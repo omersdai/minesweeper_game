@@ -31,13 +31,22 @@ body {
   @include set-background($primaryColor);
 }
 
+.game-title {
+  cursor: pointer;
+  &:hover {
+    color: #ffff;
+  }
+}
+
 .minesweeper-container {
   background-color: $boardColor;
+  margin: 20px;
   .game-header {
     height: 60px;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: center;
     background-color: rgba($color: #000000, $alpha: 0.3);
     padding: 10px;
   }
@@ -55,7 +64,6 @@ body {
 
   .game-text {
     font-size: 20px;
-    margin: 10px;
   }
 
   .minesweeper {
@@ -98,6 +106,14 @@ body {
   .fa-times {
     color: red;
   }
+}
+
+.how-to-play {
+  max-width: 540px;
+  text-align: center;
+  @include set-background(rgba($color: #000000, $alpha: 0.3));
+  padding: 10px 20px;
+  border-radius: 10px;
 }
 
 .popup {

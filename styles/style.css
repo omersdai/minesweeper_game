@@ -81,8 +81,17 @@ body {
   color: #000;
 }
 
+.game-title {
+  cursor: pointer;
+}
+
+.game-title:hover {
+  color: #ffff;
+}
+
 .minesweeper-container {
   background-color: #3dd83d;
+  margin: 20px;
 }
 
 .minesweeper-container .game-header {
@@ -96,6 +105,9 @@ body {
           flex-direction: row;
   -ms-flex-pack: distribute;
       justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: rgba(0, 0, 0, 0.3);
   padding: 10px;
 }
@@ -112,7 +124,6 @@ body {
 
 .minesweeper-container .game-text {
   font-size: 20px;
-  margin: 10px;
 }
 
 .minesweeper-container .minesweeper {
@@ -152,6 +163,15 @@ body {
 .minesweeper-container .fa-flag,
 .minesweeper-container .fa-times {
   color: red;
+}
+
+.how-to-play {
+  max-width: 540px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 10px;
 }
 
 .popup {

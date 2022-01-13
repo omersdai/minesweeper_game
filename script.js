@@ -7,6 +7,7 @@ const resetBtn = document.getElementById('resetBtn');
 const closeBtn = document.getElementById('closeBtn');
 
 // Minesweeper
+const gameTitle = document.getElementById('gameTitle');
 const minesweeperEl = document.getElementById('minesweeper');
 const difficultyEl = document.getElementById('difficulty');
 const flagCountEl = document.getElementById('flagCount');
@@ -69,6 +70,7 @@ function initializeGame() {
 
   flagCountEl.innerText = flagRemaining;
   clockEl.innerText = '0:00';
+  popupEl.classList.add('hide');
 
   fillBoard();
 }
@@ -245,10 +247,8 @@ function getRandomSetElement(set) {
 minesweeperEl.addEventListener('click', clickSquare); // left click
 minesweeperEl.addEventListener('contextmenu', placeFlag); // right click
 difficultyEl.addEventListener('change', initializeGame); // change difficulty and reset game
-resetBtn.addEventListener('click', () => {
-  popupEl.classList.add('hide');
-  initializeGame();
-});
+resetBtn.addEventListener('click', initializeGame);
+gameTitle.addEventListener('click', initializeGame);
 closeBtn.addEventListener('click', () => popupEl.classList.add('hide'));
 
 initializeGame();

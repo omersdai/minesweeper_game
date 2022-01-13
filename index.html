@@ -15,7 +15,7 @@
     <title>Minesweeper</title>
   </head>
   <body>
-    <h1>Minesweeper</h1>
+    <h1 id="gameTitle" class="game-title">Minesweeper</h1>
     <div class="minesweeper-container">
       <div class="game-header">
         <select name="difficulty" id="difficulty" class="difficulty">
@@ -32,6 +32,12 @@
       </div>
       <div class="minesweeper" id="minesweeper"></div>
     </div>
+    <div class="how-to-play">
+      <h4>HOW TO PLAY:</h4>
+      Left click to reveal a square. The number on the square tells how many
+      mines it is adjacent to. Right click to mark a square as mined.
+    </div>
+
     <div id="popup" class="popup hide">
       <button id="closeBtn" class="close-btn">
         <i class="fas fa-times fa-2x"></i>
