@@ -154,10 +154,6 @@ function startGame(square) {
   }
 }
 
-function checkGameStatus() {
-  console.log('test');
-}
-
 function updateClock() {
   time += tick;
   const seconds = parseInt(time / 1000) % 60;
@@ -249,12 +245,10 @@ function getRandomSetElement(set) {
 minesweeperEl.addEventListener('click', clickSquare); // left click
 minesweeperEl.addEventListener('contextmenu', placeFlag); // right click
 difficultyEl.addEventListener('change', initializeGame); // change difficulty and reset game
-
 resetBtn.addEventListener('click', () => {
   popupEl.classList.add('hide');
   initializeGame();
 });
-
 closeBtn.addEventListener('click', () => popupEl.classList.add('hide'));
 
 initializeGame();
