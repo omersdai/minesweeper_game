@@ -5,6 +5,9 @@
 // https://getcssscan.com/css-box-shadow-examples
 $boxShadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 
+//////////////////////////////////
+// HTML Classes
+//////////////////////////////////
 .hide {
   display: none !important;
 }
@@ -34,6 +37,16 @@ $boxShadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   border-radius: 5px;
   padding: 5px 10px;
 }
+//////////////////////////////////
+// Colors
+//////////////////////////////////
+$pink: rgb(228, 101, 122);
+$red: rgb(204, 46, 46);
+$orange: rgb(255, 166, 0);
+$green: rgb(61, 216, 61);
+$blue: rgb(0, 191, 255);
+$purple: rgb(161, 68, 173);
+$darkBlue: rgb(60, 60, 192);
 
 @function set-text-color($bg-color) {
   @if (lightness($bg-color) > 50) {
@@ -49,16 +62,9 @@ $boxShadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   background-color: $color;
   color: set-text-color($color);
 }
-
-// Colors
-$pink: rgb(228, 101, 122);
-$red: rgb(204, 46, 46);
-$orange: rgb(255, 166, 0);
-$green: rgb(61, 216, 61);
-$blue: rgb(0, 191, 255);
-$purple: rgb(161, 68, 173);
-$darkBlue: rgb(60, 60, 192);
-
+//////////////////////////////////
+// Positioning
+//////////////////////////////////
 %flex-center {
   display: flex;
   justify-content: center;
@@ -71,7 +77,9 @@ $darkBlue: rgb(60, 60, 192);
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
+//////////////////////////////////
+// Change HTML Elements
+//////////////////////////////////
 // https://css-tricks.com/snippets/css/prevent-long-urls-from-breaking-out-of-container/
 %force-word-wrap {
   overflow-wrap: break-word;

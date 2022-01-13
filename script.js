@@ -1,8 +1,10 @@
 // Popup Elements
 const popupEl = document.getElementById('popup');
 const gameMessageEl = document.getElementById('gameMessage');
-const scoreEl = document.getElementById('score');
+const timeScoreEl = document.getElementById('timeScore');
+const mineScoreEl = document.getElementById('mineScore');
 const resetBtn = document.getElementById('resetBtn');
+const closeBtn = document.getElementById('closeBtn');
 
 // Minesweeper
 const minesweeperEl = document.getElementById('minesweeper');
@@ -16,7 +18,7 @@ const crossHtml = '<i class="fas fa-times fa-2x"></i>';
 const tick = 1000; // ms
 
 let difficulty;
-let gameActive;
+let minePlaced;
 let gameEnded;
 let flagRemaining;
 let interval;
@@ -29,7 +31,6 @@ let flaggedSquares;
 let minedSquares;
 
 const difficulties = {
-  // Also add box sizes in pixel
   easy: {
     rowCount: 8,
     colCount: 10,
@@ -56,7 +57,7 @@ const difficulties = {
 // Game
 function initializeGame() {
   difficulty = difficulties[difficultyEl.value];
-  gameActive = false;
+  minePlaced = false;
   gameEnded = false;
   flagRemaining = difficulty.mineCount;
   clearInterval(interval);
@@ -74,27 +75,22 @@ function initializeGame() {
 
 function clickSquare(e) {
   const square = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
-  if (
-    gameEnded ||
-    square.classList.contains('active') ||
-    square.innerHTML !== ''
-  )
-    return;
+  if (gameEnded || activeSquares.has(square) || square.innerHTML !== '') return;
 
   const row = parseInt(square.getAttribute('row'));
   const col = parseInt(square.getAttribute('col'));
 
-  if (!gameActive) {
-    gameActive = true;
+  if (!minePlaced) {
+    minePlaced = true;
     startGame(square);
   }
 
   if (minedSquares.has(square)) {
-    endGame('lost'); // clicked mine :(
+    endGame('lost');
   } else {
     activateSquare(square);
     if (activeSquares.size + difficulty.mineCount === squareCount) {
-      alert('YOU WON!!! in' + time);
+      endGame('won');
     }
   }
 }
@@ -102,7 +98,7 @@ function clickSquare(e) {
 function placeFlag(e) {
   e.preventDefault();
   const square = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
-  if (gameEnded || square.classList.contains('active')) return;
+  if (gameEnded || activeSquares.has(square)) return;
 
   const row = parseInt(square.getAttribute('row'));
   const col = parseInt(square.getAttribute('col'));
@@ -122,7 +118,7 @@ function placeFlag(e) {
 }
 
 function activateSquare(square) {
-  if (activeSquares.has(square)) return;
+  if (gameEnded || activeSquares.has(square)) return;
 
   activeSquares.add(square);
   square.classList.add('active');
@@ -130,10 +126,10 @@ function activateSquare(square) {
   const col = parseInt(square.getAttribute('col'));
 
   const neighbors = getNeighbors(square);
-  let mineCount = neighbors.reduce((count, neighbor) => {
-    if (minedSquares.has(neighbor)) count++;
-    return count;
-  }, 0);
+  let mineCount = neighbors.reduce(
+    (count, neighbor) => (minedSquares.has(neighbor) ? count + 1 : count),
+    0
+  );
 
   if (mineCount === 0) {
     neighbors.forEach((neighbor) => activateSquare(neighbor));
@@ -200,14 +196,28 @@ function fillBoard() {
 function endGame(result) {
   gameEnded = true;
   clearInterval(interval); // stop clock
-  gameMessageEl.innerText = `You ${result}!`;
-  // popupEl.classList.remove('hide');
   for (square of minedSquares) {
     if (square.innerHTML === '') square.innerHTML = mineHtml;
   }
+  let mineScore = 0;
   for (square of flaggedSquares) {
     if (!minedSquares.has(square)) square.innerHTML = crossHtml;
+    else mineScore++;
   }
+
+  gameMessageEl.innerText = `You ${result}!`;
+
+  const seconds = parseInt(time / 1000) % 60;
+  const minutes = parseInt(time / (1000 * 60));
+  timeScoreEl.innerText = `${minutes}:${
+    seconds < 10 ? '0' + seconds : seconds
+  }`;
+
+  mineScoreEl.innerText = `${
+    result === 'won' ? difficulty.mineCount : mineScore
+  }/${difficulty.mineCount}`;
+
+  popupEl.classList.remove('hide');
 }
 
 function getNeighbors(square) {
@@ -244,5 +254,7 @@ resetBtn.addEventListener('click', () => {
   popupEl.classList.add('hide');
   initializeGame();
 });
+
+closeBtn.addEventListener('click', () => popupEl.classList.add('hide'));
 
 initializeGame();
