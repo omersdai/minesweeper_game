@@ -139,7 +139,7 @@ function activateSquare(square) {
   } else {
     square.innerText = mineCount;
   }
-  flaggedSquares.delete(square);
+  if (flaggedSquares.delete(square)) flagRemaining--; // in case where empty square was flagged incorrectly
 }
 
 function startGame(square) {
