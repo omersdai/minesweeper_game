@@ -18,14 +18,26 @@ const mineHtml = '<i class="fas fa-bomb fa-2x"></i>';
 const crossHtml = '<i class="fas fa-times fa-2x"></i>';
 const tick = 1000; // ms
 
+// const colors = [
+//   'rgb(0, 0, 0)',
+//   'rgb(202, 201, 100)',
+//   'rgb(81, 218, 76)',
+//   'rgb(0, 255, 234)',
+//   'rgb(4, 0, 248)',
+//   'rgb(178, 0, 248)',
+//   'rgb(248, 0, 124)',
+//   'rgb(248, 0, 0)',
+// ];
+
 let difficulty;
 let minePlaced;
 let gameEnded;
-let flagRemaining;
+let mineCount;
 let interval;
 let time;
 let squares;
 let squareCount;
+//Sets
 let cleanSquares;
 let activeSquares;
 let flaggedSquares;
@@ -60,7 +72,7 @@ function initializeGame() {
   difficulty = difficulties[difficultyEl.value];
   minePlaced = false;
   gameEnded = false;
-  flagRemaining = difficulty.mineCount;
+  mineCount = difficulty.mineCount;
   clearInterval(interval);
   time = 0;
   cleanSquares = new Set();
@@ -68,7 +80,7 @@ function initializeGame() {
   flaggedSquares = new Set();
   minedSquares = new Set();
 
-  flagCountEl.innerText = flagRemaining;
+  flagCountEl.innerText = mineCount;
   clockEl.innerText = '0:00';
   popupEl.classList.add('hide');
 
@@ -79,9 +91,6 @@ function clickSquare(e) {
   const square = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
   if (gameEnded || activeSquares.has(square) || square.innerHTML !== '') return;
 
-  const row = parseInt(square.getAttribute('row'));
-  const col = parseInt(square.getAttribute('col'));
-
   if (!minePlaced) {
     minePlaced = true;
     startGame(square);
@@ -91,7 +100,7 @@ function clickSquare(e) {
     endGame('lost');
   } else {
     activateSquare(square);
-    if (activeSquares.size + difficulty.mineCount === squareCount) {
+    if (activeSquares.size + mineCount === squareCount) {
       endGame('won');
     }
   }
@@ -102,21 +111,17 @@ function placeFlag(e) {
   const square = e.target.tagName === 'DIV' ? e.target : e.target.parentNode;
   if (gameEnded || activeSquares.has(square)) return;
 
-  const row = parseInt(square.getAttribute('row'));
-  const col = parseInt(square.getAttribute('col'));
   if (square.innerHTML === '') {
     // place flag
-    flagRemaining--;
     flaggedSquares.add(square);
     square.innerHTML = flagHtml;
   } else {
     // remove flag
-    flagRemaining++;
     flaggedSquares.delete(square);
     square.innerHTML = '';
   }
 
-  flagCountEl.innerText = flagRemaining;
+  flagCountEl.innerText = mineCount - flaggedSquares.size;
 }
 
 function activateSquare(square) {
@@ -124,22 +129,22 @@ function activateSquare(square) {
 
   activeSquares.add(square);
   square.classList.add('active');
-  const row = parseInt(square.getAttribute('row'));
-  const col = parseInt(square.getAttribute('col'));
 
   const neighbors = getNeighbors(square);
-  let mineCount = neighbors.reduce(
+  let neighborMineCount = neighbors.reduce(
     (count, neighbor) => (minedSquares.has(neighbor) ? count + 1 : count),
     0
   );
 
-  if (mineCount === 0) {
+  if (neighborMineCount === 0) {
     neighbors.forEach((neighbor) => activateSquare(neighbor));
     square.innerHTML = '';
   } else {
-    square.innerText = mineCount;
+    square.innerText = neighborMineCount;
+    // square.style.color = colors[neighborMineCount - 1];
   }
-  if (flaggedSquares.delete(square)) flagRemaining--; // in case where empty square was flagged incorrectly
+  if (flaggedSquares.delete(square))
+    flagCountEl.innerText = mineCount - flaggedSquares.size; // in case where empty square was flagged incorrectly
 }
 
 function startGame(square) {
@@ -147,7 +152,6 @@ function startGame(square) {
   interval = setInterval(updateClock, tick);
 
   //place mines
-  const { mineCount } = difficulty;
   getNeighbors(square).forEach((s) => cleanSquares.delete(s)); // first click cannot contain a mine
 
   for (let i = 0; i < mineCount; i++) {
